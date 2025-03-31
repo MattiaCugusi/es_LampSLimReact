@@ -5,7 +5,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 class AlunniController
 {
   public function index(Request $request, Response $response, $args){
-    $mysqli_connection = new MySQLi('my_mariadb', 'root', 'ciccio', 'scuola');
+    $db = Db::
     $result = $Db::->query("SELECT * FROM alunni");
     $results = $result->fetch_all(MYSQLI_ASSOC);
 
@@ -48,7 +48,7 @@ class AlunniController
 
   public function delete(Request $request, Response $response, $args){
   }
-
+  mysqli_connection = new MySQLi('my_mariadb', 'root', 'ciccio', 'scuola');
 }
 
 ?>
