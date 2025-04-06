@@ -5,50 +5,42 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 class AlunniController
 {
   public function index(Request $request, Response $response, $args){
-    $db = Db::
-    $result = $Db::->query("SELECT * FROM alunni");
-    $results = $result->fetch_all(MYSQLI_ASSOC);
-
+    $database = Database::getInstance();
+    $results = $database->select("alunni");
     $response->getBody()->write(json_encode($results));
     return $response->withHeader("Content-type", "application/json")->withStatus(200);
   }
 
   public function show(Request $request, Response $response, $args){
-    $mysqli_connection = new MySQLi('my_mariadb', 'root', 'ciccio', 'scuola');
-    $result = $mysqli_connection->query("SELECT * FROM alunni WHERE id = " . $args['id'])->fetch_assoc();
-
+    $database = Database::getInstance();
+    $results = $database->select("alunni", "id = " . $args["id"]);
     $response->getBody()->write(json_encode($result));
     return $response->withHeader("Content-type", "application/json")->withStatus(200);
-
   }
 
   public function create(Request $request, Response $response, $args){
-    $mysqli_connection = new MySQLi('my_mariadb', 'root', 'ciccio', 'scuola');
-    $body = json_decode($request->getBody()->getContents(), true);
-    $nome = $body["nome"];
-    $cognome = $body["cognome"];
-
-    $result = $mysqli_connection->query("INSERT INTO alunni (nome,cognome) VALUES ('$nome', '$cognome'");
-    
-    //inserimento nel DB
-
-    $response->getBody()->write($result);
-      return $response->withHeader("Content-type", "application/json")->withStatus(200);
+    $data = json_decode($request->getBody()->getContents(), true);
+    $nome = $data["nome"];
+    $cognome = $data["cognome"]; 
+    $result = Database::getInstance()->query("INSERT INTO alunni (nome,cognome) VALUES ('$nome', '$cognome')");
+    $response->getBody()->write($result ? "inserimento avvenuto\n" : "errore\n");
+    return $response->withStatus(200);
   }
 
   public function update(Request $request, Response $response, $args){
-    $mysqli_connection = new MySQLi('my_mariadb', 'root', 'ciccio', 'scuola');
-    $body = json_decode($request->getBody()->getContents(), true);
-    $nome = $body["nome"];
-    $cognome = $body["cognome"];
-    $result = $mysqli_connection->query("UPDATE alunni SET nome = '$nome', cognome = '$cognome' WHERE id = " . $args['id']);
-    $response->getBody()->write($result);
-    return $response->withHeader("Content-type", "application/json")->withStatus(200);
+    $data = json_decode($request->getBody()->getContents(), true);
+    $nuovoNome = $data["nome"];
+    $nuovoCognome = $data["cognome"];
+    $id = $args["id"];
+    $result = Database::getInstance()->query("UPDATE alunni SET nome = '$nuovoNome', cognome = '$nuovoCognome' WHERE id = $id");
+    $response->getBody()->write($result ? "aggiornamento effettuato\n" : "errore\n");
+    return $response->withStatus(200);
   }
 
   public function delete(Request $request, Response $response, $args){
-  }
-  mysqli_connection = new MySQLi('my_mariadb', 'root', 'ciccio', 'scuola');
+    $result = Database::getInstance()->query("DELETE FROM alunni WHERE id = " . $args["id"]);
+    $response->getBody()->write($result ? "studente eliminato\n" : "errore\n");
+    return $response->withStatus(200);
 }
-
+}
 ?>
